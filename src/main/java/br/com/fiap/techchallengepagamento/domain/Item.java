@@ -104,4 +104,8 @@ public class Item {
     public Integer getQuantidade() {
         return quantidade;
     }
+
+    public BigDecimal getValorTotal() {
+        return valorPorUnidade.multiply(BigDecimal.valueOf(quantidade));
+    }
 }

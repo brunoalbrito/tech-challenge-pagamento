@@ -7,6 +7,6 @@ import java.math.BigDecimal;
 public class ItemFake {
 
     public static Item fake() {
-        return Item.of("uuidProduto", "categoria", "titulo", "descricao", BigDecimal.TEN, 99);
+        return Item.of("uuidProduto", "categoria", "titulo", "descricao", BigDecimal.TEN, 1);
     }
 }
