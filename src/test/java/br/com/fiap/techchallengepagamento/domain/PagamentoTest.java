@@ -39,6 +39,14 @@ public class PagamentoTest {
     }
 
     @Test
+    public void deveLancarExcecaoQuandoItemsForVazio() {
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            Pagamento.of(new HashSet<>(), BigDecimal.TEN);
+        });
+        assertEquals("Items não podem ser nulos ou vazios", exception.getMessage());
+    }
+
+    @Test
     public void deveLancarExcecaoQuandoValorTotalForNulo() {
         IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
             Set<Item> items = new HashSet<>();
@@ -84,7 +92,7 @@ public class PagamentoTest {
         BigDecimal valorTotal = BigDecimal.valueOf(30);
         Pagamento pagamento = Pagamento.of(items, valorTotal);
 
-        Pagamento aguardandoPagamento =  pagamento.qrCodeGerado();
+        Pagamento aguardandoPagamento = pagamento.qrCodeGerado();
 
         assertEquals(StatusPagamento.AGUARDANDO_APROVACAO, aguardandoPagamento.getStatusPagamento());
     }
@@ -99,7 +107,7 @@ public class PagamentoTest {
         BigDecimal valorTotal = BigDecimal.valueOf(30);
         Pagamento pagamento = Pagamento.of(items, valorTotal);
         Pagamento pagamentoAguardando = pagamento.qrCodeGerado();
-        Pagamento pagamentoConfirmado =  pagamentoAguardando.confirmado();
+        Pagamento pagamentoConfirmado = pagamentoAguardando.confirmado();
 
         assertEquals(StatusPagamento.APROVADO, pagamentoConfirmado.getStatusPagamento());
     }
@@ -117,6 +125,23 @@ public class PagamentoTest {
         Pagamento rejeitado = aguardandoPagamento.rejeitado();
 
         assertEquals(StatusPagamento.REJEITADO, rejeitado.getStatusPagamento());
+    }
+
+    @Test
+    public void deveLancarExcecaoQuandoGerarQrCodeComStatusDiferenteDePendente() {
+        IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () -> {
+            Set<Item> items = new HashSet<>();
+            items.add(ItemFake.fake());
+            items.add(ItemFake.fake());
+            items.add(ItemFake.fake());
+
+            BigDecimal valorTotal = BigDecimal.valueOf(30);
+            Pagamento pagamento = Pagamento.of(items, valorTotal);
+            Pagamento pagamentoPendente = pagamento.qrCodeGerado();
+            Pagamento pagamentoPago = pagamentoPendente.confirmado();
+            pagamentoPago.qrCodeGerado();
+        });
+        assertEquals("Pagamento não está pendente", exception.getMessage());
     }
 
     @Test

@@ -9,7 +9,7 @@ public class Pagamento {
     private final StatusPagamento statusPagamento;
 
     private Pagamento(Set<Item> items, BigDecimal valorTotal, StatusPagamento statusPagamento) {
-        verifica(items, valorTotal, statusPagamento);
+        verifica(items, valorTotal);
         this.items = items;
         this.valorTotal = valorTotal;
         this.statusPagamento = statusPagamento;
@@ -19,10 +19,9 @@ public class Pagamento {
         return new Pagamento(items, valorTotal, StatusPagamento.PENDENTE);
     }
 
-    private void verifica(Set<Item> items, BigDecimal valorTotal, StatusPagamento statusPagamento) {
+    private void verifica(Set<Item> items, BigDecimal valorTotal) {
         verificaItems(items);
         verificaValorTotal(items, valorTotal);
-        verificaStatusPagamento(statusPagamento);
     }
 
     private void verificaItems(Set<Item> items) {
@@ -41,12 +40,6 @@ public class Pagamento {
 
         if (valorTotal.compareTo(valorTotalCalculado) != 0) {
             throw new IllegalArgumentException("Valor total do pagamento deve ser igual ao valor total calculado");
-        }
-    }
-
-    private void verificaStatusPagamento(StatusPagamento statusPagamento) {
-        if (statusPagamento == null) {
-            throw new IllegalArgumentException("Status do pagamento não pode ser nulo");
         }
     }
 
