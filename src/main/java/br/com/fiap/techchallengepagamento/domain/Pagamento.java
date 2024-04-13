@@ -1,36 +1,47 @@
 package br.com.fiap.techchallengepagamento.domain;
 
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 
 public class Pagamento {
-    private final Set<Item> items;
+
+    private final List<Item> items;
     private final BigDecimal valorTotal;
     private final StatusPagamento statusPagamento;
+    private final String qrCode;
 
-    private Pagamento(Set<Item> items, BigDecimal valorTotal, StatusPagamento statusPagamento) {
+    private Pagamento(List<Item> items,
+                      BigDecimal valorTotal,
+                      StatusPagamento statusPagamento,
+                      String qrCode) {
         verifica(items, valorTotal);
         this.items = items;
         this.valorTotal = valorTotal;
         this.statusPagamento = statusPagamento;
+        this.qrCode = qrCode;
     }
 
-    public static Pagamento of(Set<Item> items, BigDecimal valorTotal) {
-        return new Pagamento(items, valorTotal, StatusPagamento.PENDENTE);
+    public static Pagamento of(List<Item> items, BigDecimal valorTotal) {
+        return new Builder()
+                .items(items)
+                .valorTotal(valorTotal)
+                .statusPagamento(StatusPagamento.PENDENTE)
+                .qrCode("")
+                .build();
     }
 
-    private void verifica(Set<Item> items, BigDecimal valorTotal) {
+    private void verifica(List<Item> items, BigDecimal valorTotal) {
         verificaItems(items);
         verificaValorTotal(items, valorTotal);
     }
 
-    private void verificaItems(Set<Item> items) {
+    private void verificaItems(List<Item> items) {
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("Items não podem ser nulos ou vazios");
         }
     }
 
-    private void verificaValorTotal(Set<Item> items, BigDecimal valorTotal) {
+    private void verificaValorTotal(List<Item> items, BigDecimal valorTotal) {
         if (valorTotal == null || valorTotal.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Valor total do pagamento deve ser maior que zero");
         }
@@ -43,19 +54,7 @@ public class Pagamento {
         }
     }
 
-    public Set<Item> getItems() {
-        return items;
-    }
-
-    public BigDecimal getValorTotal() {
-        return valorTotal;
-    }
-
-    public StatusPagamento getStatusPagamento() {
-        return statusPagamento;
-    }
-
-    public Pagamento qrCodeGerado() {
+    public Pagamento qrCodeGerado(String qrCode) {
         if (StatusPagamento.PENDENTE != this.statusPagamento) {
             throw new IllegalStateException("Pagamento não está pendente");
         }
@@ -64,6 +63,7 @@ public class Pagamento {
                 .items(this.items)
                 .valorTotal(this.valorTotal)
                 .statusPagamento(StatusPagamento.AGUARDANDO_APROVACAO)
+                .qrCode(qrCode)
                 .build();
     }
 
@@ -91,12 +91,30 @@ public class Pagamento {
                 .build();
     }
 
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public BigDecimal getValorTotal() {
+        return valorTotal;
+    }
+
+    public StatusPagamento getStatusPagamento() {
+        return statusPagamento;
+    }
+
+    public String getQrCode() {
+        return qrCode;
+    }
+
     private static class Builder {
-        private Set<Item> items;
+        private List<Item> items;
         private BigDecimal valorTotal;
         private StatusPagamento statusPagamento;
 
-        private Builder items(Set<Item> items) {
+        private String qrCode;
+
+        private Builder items(List<Item> items) {
             this.items = items;
             return this;
         }
@@ -111,8 +129,14 @@ public class Pagamento {
             return this;
         }
 
+        private Builder qrCode(String qrCode) {
+            this.qrCode = qrCode;
+            return this;
+        }
+
         public Pagamento build() {
-            return new Pagamento(items, valorTotal, statusPagamento);
+            return new Pagamento(items, valorTotal, statusPagamento, qrCode);
         }
     }
 }
+

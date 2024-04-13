@@ -12,12 +12,12 @@ public class ItemTest {
     @Test
     public void deveCriarItemValido() {
         Item item = Item.of("1", "categoria", "titulo", "descricao", BigDecimal.TEN, 99);
-        assertEquals("1", item.getUuid());
-        assertEquals("categoria", item.getCategoria());
-        assertEquals("titulo", item.getTitulo());
-        assertEquals("descricao", item.getDescricao());
-        assertEquals(99, item.getQuantidade());
-        assertEquals(BigDecimal.TEN, item.getValorPorUnidade());
+        assertEquals("1", item.uuid());
+        assertEquals("categoria", item.categoria());
+        assertEquals("titulo", item.titulo());
+        assertEquals("descricao", item.descricao());
+        assertEquals(99, item.quantidade());
+        assertEquals(BigDecimal.TEN, item.valorPorUnidade());
     }
 
     @Test

@@ -2,25 +2,10 @@ package br.com.fiap.techchallengepagamento.domain;
 
 import java.math.BigDecimal;
 
-public class Item {
-    private final String uuid;
-
-    private final String categoria;
-
-    private final String titulo;
-
-    private final String descricao;
-    private final BigDecimal valorPorUnidade;
-    private final Integer quantidade;
-
-    public Item(String uuid, String categoria, String titulo, String descricao, BigDecimal valorPorUnidade, Integer quantidade) {
+public record Item(String uuid, String categoria, String titulo, String descricao, BigDecimal valorPorUnidade,
+                   Integer quantidade) {
+    public Item {
         valida(uuid, categoria, titulo, descricao, valorPorUnidade, quantidade);
-        this.uuid = uuid;
-        this.categoria = categoria;
-        this.titulo = titulo;
-        this.descricao = descricao;
-        this.valorPorUnidade = valorPorUnidade;
-        this.quantidade = quantidade;
     }
 
 
@@ -79,30 +64,6 @@ public class Item {
         if (valorPorUnidade.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Valor por unidade deve ser maior que zero");
         }
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public BigDecimal getValorPorUnidade() {
-        return valorPorUnidade;
-    }
-
-    public Integer getQuantidade() {
-        return quantidade;
     }
 
     public BigDecimal getValorTotal() {

@@ -5,17 +5,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PagamentoTest {
+
+    private final String QR_CODE = "QR_CODE_TESTE_123";
 
     @Test
     public void deveCriarPagamentoValido() {
 
-        Set<Item> items = new HashSet<>();
+        List<Item> items = new ArrayList<>();
         items.add(ItemFake.fake());
         items.add(ItemFake.fake());
         items.add(ItemFake.fake());
@@ -28,6 +31,7 @@ public class PagamentoTest {
         assertEquals(items, pagamento.getItems());
         assertEquals(valorTotal, pagamento.getValorTotal());
         assertEquals(statusPagamento, pagamento.getStatusPagamento());
+        assertTrue(pagamento.getQrCode().isEmpty());
     }
 
     @Test
@@ -41,7 +45,7 @@ public class PagamentoTest {
     @Test
     public void deveLancarExcecaoQuandoItemsForVazio() {
         IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Pagamento.of(new HashSet<>(), BigDecimal.TEN);
+            Pagamento.of(new ArrayList<>(), BigDecimal.TEN);
         });
         assertEquals("Items não podem ser nulos ou vazios", exception.getMessage());
     }
@@ -49,7 +53,7 @@ public class PagamentoTest {
     @Test
     public void deveLancarExcecaoQuandoValorTotalForNulo() {
         IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Set<Item> items = new HashSet<>();
+            List<Item> items = new ArrayList<>();
             items.add(ItemFake.fake());
             items.add(ItemFake.fake());
             items.add(ItemFake.fake());
@@ -61,7 +65,7 @@ public class PagamentoTest {
     @Test
     public void deveLancarExcecaoQuandoValorTotalForMenorOuIgualAZero() {
         IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Set<Item> items = new HashSet<>();
+            List<Item> items = new ArrayList<>();
             items.add(ItemFake.fake());
             items.add(ItemFake.fake());
             items.add(ItemFake.fake());
@@ -73,7 +77,7 @@ public class PagamentoTest {
     @Test
     public void deveLancarExcecaoQuandoValorTotalForDiferenteDoValorTotalCalculado() {
         IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Set<Item> items = new HashSet<>();
+            List<Item> items = new ArrayList<>();
             items.add(ItemFake.fake());
             items.add(ItemFake.fake());
             items.add(ItemFake.fake());
@@ -84,7 +88,7 @@ public class PagamentoTest {
 
     @Test
     public void deveAtualizarStatusAposGerarQrCode() {
-        Set<Item> items = new HashSet<>();
+        List<Item> items = new ArrayList<>();
         items.add(ItemFake.fake());
         items.add(ItemFake.fake());
         items.add(ItemFake.fake());
@@ -92,21 +96,22 @@ public class PagamentoTest {
         BigDecimal valorTotal = BigDecimal.valueOf(30);
         Pagamento pagamento = Pagamento.of(items, valorTotal);
 
-        Pagamento aguardandoPagamento = pagamento.qrCodeGerado();
+        Pagamento aguardandoPagamento = pagamento.qrCodeGerado(QR_CODE);
 
         assertEquals(StatusPagamento.AGUARDANDO_APROVACAO, aguardandoPagamento.getStatusPagamento());
+        assertEquals(QR_CODE, aguardandoPagamento.getQrCode());
     }
 
     @Test
     public void deveAtualizarStatusAposConfirmarPagamento() {
-        Set<Item> items = new HashSet<>();
+        List<Item> items = new ArrayList<>();
         items.add(ItemFake.fake());
         items.add(ItemFake.fake());
         items.add(ItemFake.fake());
 
         BigDecimal valorTotal = BigDecimal.valueOf(30);
         Pagamento pagamento = Pagamento.of(items, valorTotal);
-        Pagamento pagamentoAguardando = pagamento.qrCodeGerado();
+        Pagamento pagamentoAguardando = pagamento.qrCodeGerado(QR_CODE);
         Pagamento pagamentoConfirmado = pagamentoAguardando.confirmado();
 
         assertEquals(StatusPagamento.APROVADO, pagamentoConfirmado.getStatusPagamento());
@@ -114,14 +119,14 @@ public class PagamentoTest {
 
     @Test
     public void deveAtualizarStatusAposRejeitarPagamento() {
-        Set<Item> items = new HashSet<>();
+        List<Item> items = new ArrayList<>();
         items.add(ItemFake.fake());
         items.add(ItemFake.fake());
         items.add(ItemFake.fake());
 
         BigDecimal valorTotal = BigDecimal.valueOf(30);
         Pagamento pagamento = Pagamento.of(items, valorTotal);
-        Pagamento aguardandoPagamento = pagamento.qrCodeGerado();
+        Pagamento aguardandoPagamento = pagamento.qrCodeGerado(QR_CODE);
         Pagamento rejeitado = aguardandoPagamento.rejeitado();
 
         assertEquals(StatusPagamento.REJEITADO, rejeitado.getStatusPagamento());
@@ -130,16 +135,16 @@ public class PagamentoTest {
     @Test
     public void deveLancarExcecaoQuandoGerarQrCodeComStatusDiferenteDePendente() {
         IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () -> {
-            Set<Item> items = new HashSet<>();
+            List<Item> items = new ArrayList<>();
             items.add(ItemFake.fake());
             items.add(ItemFake.fake());
             items.add(ItemFake.fake());
 
             BigDecimal valorTotal = BigDecimal.valueOf(30);
             Pagamento pagamento = Pagamento.of(items, valorTotal);
-            Pagamento pagamentoPendente = pagamento.qrCodeGerado();
+            Pagamento pagamentoPendente = pagamento.qrCodeGerado(QR_CODE);
             Pagamento pagamentoPago = pagamentoPendente.confirmado();
-            pagamentoPago.qrCodeGerado();
+            pagamentoPago.qrCodeGerado(QR_CODE);
         });
         assertEquals("Pagamento não está pendente", exception.getMessage());
     }
@@ -147,14 +152,14 @@ public class PagamentoTest {
     @Test
     public void deveLancarExcecaoQuandoStatusNaoForAguardandoAprovacao() {
         IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () -> {
-            Set<Item> items = new HashSet<>();
+            List<Item> items = new ArrayList<>();
             items.add(ItemFake.fake());
             items.add(ItemFake.fake());
             items.add(ItemFake.fake());
 
             BigDecimal valorTotal = BigDecimal.valueOf(30);
             Pagamento pagamento = Pagamento.of(items, valorTotal);
-            Pagamento aguardandoPagamento = pagamento.qrCodeGerado();
+            Pagamento aguardandoPagamento = pagamento.qrCodeGerado(QR_CODE);
             Pagamento pagamentoConfirmando = aguardandoPagamento.confirmado();
             pagamentoConfirmando.confirmado();
         });
@@ -164,14 +169,14 @@ public class PagamentoTest {
     @Test
     public void deveLancarExcecaoQuandoStatusNaoForAguardandoAprovacaoAoRejeitar() {
         IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class, () -> {
-            Set<Item> items = new HashSet<>();
+            List<Item> items = new ArrayList<>();
             items.add(ItemFake.fake());
             items.add(ItemFake.fake());
             items.add(ItemFake.fake());
 
             BigDecimal valorTotal = BigDecimal.valueOf(30);
             Pagamento pagamento = Pagamento.of(items, valorTotal);
-            Pagamento aguardandoPagamento = pagamento.qrCodeGerado();
+            Pagamento aguardandoPagamento = pagamento.qrCodeGerado(QR_CODE);
             Pagamento pagamentoConfirmando = aguardandoPagamento.confirmado();
             pagamentoConfirmando.rejeitado();
         });
