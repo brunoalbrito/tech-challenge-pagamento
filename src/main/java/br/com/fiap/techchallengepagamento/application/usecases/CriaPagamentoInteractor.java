@@ -11,17 +11,16 @@ public class CriaPagamentoInteractor {
 
     private final PaymentBrokerGateway paymentBrokerGateway;
 
-    public CriaPagamentoInteractor(final PagamentoGateway pagamentoGateway, final PaymentBrokerGateway paymentBrokerGateway){
+    public CriaPagamentoInteractor(final PagamentoGateway pagamentoGateway, final PaymentBrokerGateway paymentBrokerGateway) {
         this.pagamentoGateway = pagamentoGateway;
         this.paymentBrokerGateway = paymentBrokerGateway;
     }
 
 
     public Pagamento execute(Pagamento pagamento) {
-
         String qrCode = paymentBrokerGateway.registraPagamento(pagamento);
-        pagamento.qrCodeGerado(qrCode);
+        Pagamento pagamentoAguardando = pagamento.qrCodeGerado(qrCode);
 
-        return pagamentoGateway.salvaPagamento(pagamento);
+        return pagamentoGateway.salvaPagamento(pagamentoAguardando);
     }
 }

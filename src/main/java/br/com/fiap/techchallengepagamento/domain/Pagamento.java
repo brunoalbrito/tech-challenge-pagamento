@@ -2,9 +2,11 @@ package br.com.fiap.techchallengepagamento.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public class Pagamento {
 
+    private final UUID uuid;
     private final List<Item> items;
     private final BigDecimal valorTotal;
     private final StatusPagamento statusPagamento;
@@ -15,6 +17,7 @@ public class Pagamento {
                       StatusPagamento statusPagamento,
                       String qrCode) {
         verifica(items, valorTotal);
+        this.uuid = UUID.randomUUID();
         this.items = items;
         this.valorTotal = valorTotal;
         this.statusPagamento = statusPagamento;
@@ -27,6 +30,15 @@ public class Pagamento {
                 .valorTotal(valorTotal)
                 .statusPagamento(StatusPagamento.PENDENTE)
                 .qrCode("")
+                .build();
+    }
+
+    public static Pagamento of(List<Item> items, BigDecimal valorTotal, String qrCode, StatusPagamento statusPagamento) {
+        return new Builder()
+                .items(items)
+                .valorTotal(valorTotal)
+                .statusPagamento(statusPagamento)
+                .qrCode(qrCode)
                 .build();
     }
 
@@ -89,6 +101,10 @@ public class Pagamento {
                 .valorTotal(this.valorTotal)
                 .statusPagamento(StatusPagamento.REJEITADO)
                 .build();
+    }
+
+    public UUID getUuid() {
+        return this.uuid;
     }
 
     public List<Item> getItems() {
