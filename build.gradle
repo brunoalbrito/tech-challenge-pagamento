@@ -8,6 +8,10 @@ plugins {
 group = 'br.com.fiap'
 version = '0.0.1-SNAPSHOT'
 
+ext {
+	cucumberVersion = '1.2.6'
+}
+
 java {
 	sourceCompatibility = '17'
 }

@@ -1,5 +1,7 @@
 package br.com.fiap.techchallengepagamento.infrastructure.persistence.entity;
 
+import br.com.fiap.techchallengepagamento.domain.Pagamento;
+import br.com.fiap.techchallengepagamento.domain.StatusPagamento;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -33,4 +35,17 @@ public class PagamentoEntity {
     @CollectionTable(name = "pagamento_status_pagamento", joinColumns = @JoinColumn(name = "pagamento_id"))
     private List<StatusPagamentoEntity> statusPagamento;
     private String qrCode;
+
+    public static PagamentoEntity fromDomain(Pagamento pagamento) {
+        var entity = new PagamentoEntity();
+        entity.items = pagamento.getItems().stream().map(ItemEntity::fromDomain).toList();
+        entity.valorTotal = pagamento.getValorTotal();
+        entity.statusPagamento = List.of(StatusPagamentoEntity.valueOf(pagamento.getStatusPagamento().name()));
+        entity.qrCode = pagamento.getQrCode();
+        return entity;
+    }
+
+    public Pagamento toDomain() {
+        return Pagamento.of(items.stream().map(ItemEntity::toDomain).toList(), valorTotal, qrCode, StatusPagamento.valueOf(statusPagamento.getLast().name()));
+    }
 }
