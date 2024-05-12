@@ -13,7 +13,7 @@ ext {
 }
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '21'
 }
 
 repositories {
@@ -29,9 +29,7 @@ dependencies {
 	implementation 'org.apache.commons:commons-lang3:3.13.0'
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
 }
 
 jacocoTestReport {
@@ -43,7 +41,7 @@ jacocoTestReport {
 }
 
 jacoco {
-	toolVersion = '0.8.7'
+	toolVersion = '0.8.12'
 }
 
 test {
