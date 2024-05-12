@@ -1,5 +1,6 @@
 package br.com.fiap.techchallengepagamento.infrastructure.persistence.entity;
 
+import br.com.fiap.techchallengepagamento.domain.Item;
 import br.com.fiap.techchallengepagamento.domain.Pagamento;
 import br.com.fiap.techchallengepagamento.domain.StatusPagamento;
 import jakarta.persistence.CollectionTable;
@@ -46,6 +47,13 @@ public class PagamentoEntity {
     }
 
     public Pagamento toDomain() {
-        return Pagamento.of(items.stream().map(ItemEntity::toDomain).toList(), valorTotal, qrCode, StatusPagamento.valueOf(statusPagamento.getLast().name()));
+        List<Item> domainItems = items.stream().map(ItemEntity::toDomain).toList();
+        StatusPagamento statusPagamento = StatusPagamento.valueOf(this.statusPagamento.getLast().name());
+
+        return Pagamento.of(domainItems,
+                valorTotal,
+                qrCode,
+                statusPagamento
+        );
     }
 }
