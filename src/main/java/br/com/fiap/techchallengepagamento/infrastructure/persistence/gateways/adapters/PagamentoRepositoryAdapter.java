@@ -16,7 +16,6 @@ public class PagamentoRepositoryAdapter implements PagamentoGateway {
     }
 
     public Pagamento salvaPagamento(Pagamento pagamento) {
-
         return pagamentoJpaRepository.save(PagamentoEntity.fromDomain(pagamento)).toDomain();
     }
 }
