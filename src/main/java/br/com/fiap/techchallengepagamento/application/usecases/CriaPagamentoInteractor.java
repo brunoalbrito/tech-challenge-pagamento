@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CriaPagamentoInteractor {
     private final PagamentoGateway pagamentoGateway;
-
     private final PaymentBrokerGateway paymentBrokerGateway;
 
     public CriaPagamentoInteractor(final PagamentoGateway pagamentoGateway, final PaymentBrokerGateway paymentBrokerGateway) {
