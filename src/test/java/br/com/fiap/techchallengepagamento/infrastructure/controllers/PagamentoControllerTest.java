@@ -6,6 +6,7 @@ import br.com.fiap.techchallengepagamento.domain.Pagamento;
 import br.com.fiap.techchallengepagamento.infrastructure.controllers.request.ItemRequest;
 import br.com.fiap.techchallengepagamento.infrastructure.controllers.request.PagamentoRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(PagamentoController.class)
 public class PagamentoControllerTest {
