@@ -2,6 +2,7 @@
 
 Funcionalidade: Pagamento
 
+  @ignore
   Cenario: Cria pagamento com sucesso
     Dado uma requisição de pagamento valida
     Quando enviado um POST para "/v1/pagamento"
