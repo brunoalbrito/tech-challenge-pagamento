@@ -4,6 +4,7 @@ import br.com.fiap.techchallengepagamento.application.usecases.CriaPagamentoInte
 import br.com.fiap.techchallengepagamento.domain.Pagamento;
 import br.com.fiap.techchallengepagamento.infrastructure.controllers.request.PagamentoRequest;
 import br.com.fiap.techchallengepagamento.infrastructure.controllers.response.PagamentoResponse;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,8 +18,11 @@ public class PagamentoController {
 
     private final CriaPagamentoInteractor criaPagamentoInteractor;
 
-    public PagamentoController(CriaPagamentoInteractor criaPagamentoInteractor) {
+    private final RabbitTemplate rabbitTemplate;
+
+    public PagamentoController(CriaPagamentoInteractor criaPagamentoInteractor, RabbitTemplate rabbitTemplate) {
         this.criaPagamentoInteractor = criaPagamentoInteractor;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @PostMapping
@@ -28,6 +32,10 @@ public class PagamentoController {
         Pagamento pagamentoCriado = criaPagamentoInteractor.execute(pagamento);
 
         PagamentoResponse pagamentoResponse = PagamentoResponse.fromDomain(pagamentoCriado);
+
+        rabbitTemplate.convertAndSend(pagamentoResponse);
+
+
         return new ResponseEntity<>(pagamentoResponse, HttpStatus.CREATED);
     }
 }
