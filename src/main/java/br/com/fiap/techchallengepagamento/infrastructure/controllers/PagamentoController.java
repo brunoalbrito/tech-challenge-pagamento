@@ -4,6 +4,8 @@ import br.com.fiap.techchallengepagamento.application.usecases.CriaPagamentoInte
 import br.com.fiap.techchallengepagamento.domain.Pagamento;
 import br.com.fiap.techchallengepagamento.infrastructure.controllers.request.PagamentoRequest;
 import br.com.fiap.techchallengepagamento.infrastructure.controllers.response.PagamentoResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,21 +22,25 @@ public class PagamentoController {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public PagamentoController(CriaPagamentoInteractor criaPagamentoInteractor, RabbitTemplate rabbitTemplate) {
+
+    private final ObjectMapper objectMapper;
+
+    public PagamentoController(CriaPagamentoInteractor criaPagamentoInteractor, RabbitTemplate rabbitTemplate, ObjectMapper objectMapper) {
         this.criaPagamentoInteractor = criaPagamentoInteractor;
         this.rabbitTemplate = rabbitTemplate;
+        this.objectMapper = objectMapper;
     }
 
     @PostMapping
-    public ResponseEntity<PagamentoResponse> criaPagamento(@RequestBody final PagamentoRequest pagamentoRequest) {
+    public ResponseEntity<PagamentoResponse> criaPagamento(@RequestBody final PagamentoRequest pagamentoRequest) throws JsonProcessingException {
         Pagamento pagamento = pagamentoRequest.toDomain();
 
         Pagamento pagamentoCriado = criaPagamentoInteractor.execute(pagamento);
 
         PagamentoResponse pagamentoResponse = PagamentoResponse.fromDomain(pagamentoCriado);
+        pagamentoResponse.setStatus("APROVADO");
 
-        rabbitTemplate.convertAndSend(pagamentoResponse);
-
+        rabbitTemplate.convertAndSend("pagamentoQueue", objectMapper.writeValueAsString(pagamentoResponse));
 
         return new ResponseEntity<>(pagamentoResponse, HttpStatus.CREATED);
     }
