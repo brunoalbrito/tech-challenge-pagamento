@@ -9,11 +9,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public record PagamentoRequest(
         Set<ItemRequest> items,
-        BigDecimal valorTotal
+        BigDecimal valorTotal,
+
+        UUID pedidoId
 ) {
     public Pagamento toDomain() {
         List<Item> items = this.items.stream()

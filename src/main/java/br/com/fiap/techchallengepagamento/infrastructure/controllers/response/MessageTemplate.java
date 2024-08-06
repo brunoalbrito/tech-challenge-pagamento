@@ -6,14 +6,14 @@ import br.com.fiap.techchallengepagamento.domain.StatusPagamento;
 import java.util.UUID;
 
 public record MessageTemplate(
-        UUID uuid,
+        UUID pedidoId,
         String qrCode,
         String status
-)  {
+) {
 
-    public static MessageTemplate fromDomain(Pagamento pagamento, StatusPagamento statusPagamento) {
+    public static MessageTemplate fromDomain(UUID pedidoId, Pagamento pagamento, StatusPagamento statusPagamento) {
         return new MessageTemplate(
-                pagamento.getUuid(), pagamento.getQrCode(), statusPagamento.name()
+                pedidoId, pagamento.getQrCode(), statusPagamento.name()
         );
     }
 }

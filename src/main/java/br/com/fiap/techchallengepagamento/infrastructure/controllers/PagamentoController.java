@@ -41,7 +41,7 @@ public class PagamentoController {
 
         PagamentoResponse pagamentoResponse = PagamentoResponse.fromDomain(pagamentoCriado);
 
-        MessageTemplate messageTemplate = MessageTemplate.fromDomain(pagamentoCriado, StatusPagamento.APROVADO);
+        MessageTemplate messageTemplate = MessageTemplate.fromDomain(pagamentoRequest.pedidoId(), pagamentoCriado, StatusPagamento.APROVADO);
 
         rabbitTemplate.convertAndSend("pagamentoQueue", objectMapper.writeValueAsString(messageTemplate));
 
