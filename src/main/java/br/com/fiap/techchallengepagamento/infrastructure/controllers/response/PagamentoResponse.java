@@ -45,4 +45,8 @@ public class PagamentoResponse {
     public String getStatus() {
         return status;
     }
+
+    public String qrCode() {
+        return this.qrCode;
+    }
 }
