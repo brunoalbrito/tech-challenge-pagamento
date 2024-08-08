@@ -52,7 +52,8 @@ public class PagamentoControllerTest {
 
         PagamentoRequest pagamentoRequest = new PagamentoRequest(
                 Set.of(itemRequest),
-                BigDecimal.TEN
+                BigDecimal.TEN,
+                UUID.randomUUID()
         );
 
         when(criaPagamentoInteractor.execute(Mockito.any(Pagamento.class)))

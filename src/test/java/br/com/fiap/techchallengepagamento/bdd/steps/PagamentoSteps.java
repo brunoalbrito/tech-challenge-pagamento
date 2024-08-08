@@ -52,7 +52,8 @@ public class PagamentoSteps {
 
         pagamentoRequest = new PagamentoRequest(
                 Set.of(itemRequest),
-                BigDecimal.TEN
+                BigDecimal.TEN,
+                UUID.randomUUID()
         );
     }
 

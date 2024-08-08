@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 public record PagamentoRequest(
         Set<ItemRequest> items,
         BigDecimal valorTotal,
-
         UUID pedidoId
 ) {
     public Pagamento toDomain() {
